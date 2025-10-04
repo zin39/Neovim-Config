@@ -59,5 +59,5 @@ Check `lua/plugins/*.lua` for specific versions.
 
 ## Installation
 ```bash
-git clone <your-repo> ~/.config/nvim
+git clone  Neovim-Config ~/.config/nvim
 Nvim
