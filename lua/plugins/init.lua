@@ -21,6 +21,7 @@ require("lazy").setup({
     { import = "plugins.completion" },
     { import = "plugins.tools" },
     { import = "plugins.formatting" },
+    { import = "plugins.autopairs" },
   },
   defaults = {
     lazy = false,
