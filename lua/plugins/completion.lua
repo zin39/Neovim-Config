@@ -1,17 +1,26 @@
 return {
   "hrsh7th/nvim-cmp",
-  version = "v0.0.1",
+  commit = "ae644feb7b67bf1ce4260c231d1d4300b19c6f30", -- Known working commit  event = "InsertEnter",
   event = "InsertEnter",
   dependencies = {
     "hrsh7th/cmp-nvim-lsp",
     "hrsh7th/cmp-buffer",
     "hrsh7th/cmp-path",
-    "L3MON4D3/LuaSnip",
+    {
+      "L3MON4D3/LuaSnip",
+      version = "v2.3.0",
+      build = "make install_jsregexp",
+
+    },
     "saadparwaiz1/cmp_luasnip",
+    "rafamadriz/friendly-snippets",
   },
   config = function()
     local cmp = require("cmp")
     local luasnip = require("luasnip")
+
+    -- Load friendly-snippets
+    require("luasnip.loaders.from_vscode").lazy_load()
 
     cmp.setup({
       snippet = {
@@ -51,5 +60,9 @@ return {
         { name = "path" },
       }),
     })
+
+    -- Integrate with autopairs AFTER cmp is fully setup
+    local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+    cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
   end,
 }
