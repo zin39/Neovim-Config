@@ -21,7 +21,7 @@ return {
     -- LSP keymaps
     local on_attach = function(client, bufnr)
       local opts = { buffer = bufnr, silent = true }
-      
+
       vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
       vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
       vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
@@ -41,6 +41,7 @@ return {
         "ts_ls",
         "eslint",
         "lua_ls",
+        "marksman",
       },
       automatic_installation = true,
     })
@@ -51,6 +52,25 @@ return {
     lspconfig.ts_ls.setup({
       on_attach = on_attach,
       capabilities = capabilities,
+    })
+
+    -- Configure Marksman for Markdown
+    lspconfig.marksman.setup({
+      on_attach = on_attach,
+      capabilities = capabilities,
+    })
+
+    -- Configure HTML
+    lspconfig.html.setup({
+      on_attach = on_attach,
+      capabilities = capabilities,
+    })
+
+    -- Configure Emmet
+    lspconfig.emmet_ls.setup({
+      on_attach = on_attach,
+      capabilities = capabilities,
+      filetypes = { "html", "css" },
     })
 
     -- Configure ESLint
