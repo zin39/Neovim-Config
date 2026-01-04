@@ -1,6 +1,5 @@
 return {
   "hrsh7th/nvim-cmp",
-  commit = "ae644feb7b67bf1ce4260c231d1d4300b19c6f30",
   event = "InsertEnter",
   dependencies = {
     "hrsh7th/cmp-nvim-lsp",
@@ -8,14 +7,30 @@ return {
     "hrsh7th/cmp-path",
     {
       "L3MON4D3/LuaSnip",
-      version = "v2.3.0",
+      version = "v2.*",
+      build = "make install_jsregexp",  -- ADDED: Better snippet support
+      dependencies = {
+        -- NEW: Pre-made snippets
+        {
+          "rafamadriz/friendly-snippets",
+          config = function()
+            require("luasnip.loaders.from_vscode").lazy_load()
+          end,
+        },
+      },
     },
     "saadparwaiz1/cmp_luasnip",
-    "windwp/nvim-autopairs",
   },
   config = function()
     local cmp = require("cmp")
     local luasnip = require("luasnip")
+
+    -- Better snippet navigation
+    luasnip.config.setup({
+      history = true,
+      updateevents = "TextChanged,TextChangedI",
+      delete_check_events = "TextChanged",
+    })
 
     cmp.setup({
       snippet = {
@@ -28,21 +43,12 @@ return {
         ["<C-f>"] = cmp.mapping.scroll_docs(4),
         ["<C-Space>"] = cmp.mapping.complete(),
         ["<C-e>"] = cmp.mapping.abort(),
-        -- Custom CR that respects both cmp and autopairs
-        ["<CR>"] = function(fallback)
-          if cmp.visible() then
-            if cmp.get_selected_entry() then
-              cmp.confirm({ select = true })
-            else
-              fallback()
-            end
-          else
-            fallback()
-          end
-        end,
+        ["<CR>"] = cmp.mapping.confirm({ select = false }),  -- Only confirm explicit selection
         ["<Tab>"] = cmp.mapping(function(fallback)
           if cmp.visible() then
             cmp.select_next_item()
+          elseif luasnip.expand_or_locally_jumpable() then
+            luasnip.expand_or_jump()
           else
             fallback()
           end
@@ -50,21 +56,38 @@ return {
         ["<S-Tab>"] = cmp.mapping(function(fallback)
           if cmp.visible() then
             cmp.select_prev_item()
+          elseif luasnip.locally_jumpable(-1) then
+            luasnip.jump(-1)
           else
             fallback()
           end
         end, { "i", "s" }),
       }),
       sources = cmp.config.sources({
-        { name = "nvim_lsp" },
-        { name = "luasnip" },
-        { name = "buffer" },
-        { name = "path" },
+        { name = "nvim_lsp", priority = 1000 },
+        { name = "luasnip", priority = 750 },
+        { name = "buffer", priority = 500, keyword_length = 3 },
+        { name = "path", priority = 250 },
       }),
+      formatting = {
+        format = function(entry, vim_item)
+          -- Show source
+          vim_item.menu = ({
+            nvim_lsp = "[LSP]",
+            luasnip = "[Snip]",
+            buffer = "[Buf]",
+            path = "[Path]",
+          })[entry.source.name]
+          return vim_item
+        end,
+      },
+      window = {
+        completion = cmp.config.window.bordered(),
+        documentation = cmp.config.window.bordered(),
+      },
+      experimental = {
+        ghost_text = true,  -- Show ghost text preview
+      },
     })
-
-    -- Integrate with autopairs
-    local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-    cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
   end,
 }

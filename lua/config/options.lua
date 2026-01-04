@@ -46,8 +46,23 @@ opt.undodir = vim.fn.stdpath("data") .. "/undo"
 opt.updatetime = 250
 opt.timeoutlen = 300
 
--- Disable swapfile
+-- Disable swapfile and backup files
 opt.swapfile = false
+opt.backup = false
+opt.writebackup = false
 
 -- Better completion experience
 opt.completeopt = "menu,menuone,noselect"
+
+-- Folding configuration (for treesitter folding)
+opt.foldmethod = "expr"
+opt.foldexpr = "nvim_treesitter#foldexpr()"
+opt.foldlevel = 99  -- Start with all folds open
+opt.foldlevelstart = 99
+
+-- Better scroll context
+opt.scrolloff = 8
+opt.sidescrolloff = 8
+
+-- Show substitution preview
+opt.inccommand = "split"

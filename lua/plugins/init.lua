@@ -22,10 +22,17 @@ require("lazy").setup({
     { import = "plugins.tools" },
     { import = "plugins.formatting" },
     { import = "plugins.autopairs" },
+    { import = "plugins.git" },        -- NEW
+    { import = "plugins.terminal" },   -- NEW
+    { import = "plugins.extras" },     -- NEW
+    { import = "plugins.dap" },        -- NEW
   },
   defaults = {
-    lazy = false,
+    lazy = true,  -- CHANGED: Enable lazy loading by default
     version = false,
+  },
+  install = {
+    colorscheme = { "catppuccin" },  -- CHANGED
   },
   checker = {
     enabled = false,
@@ -38,6 +45,7 @@ require("lazy").setup({
         "tohtml",
         "tutor",
         "zipPlugin",
+        "netrwPlugin",  -- ADDED: Disable netrw since we use neo-tree
       },
     },
   },
